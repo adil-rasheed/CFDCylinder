@@ -39,7 +39,7 @@ def macroscopic(f):
 
 
 def run(re=100.0, steps=30000, nx=420, ny=160, D=20, U=0.04,
-        cylinder=True, probe=None, log_every=1000, verbose=True):
+        cylinder=True, probe=None, kick=0.3, log_every=1000, verbose=True):
     """Run the simulation. Returns a dict with probe history and final fields."""
     nu = U * D / re
     tau = 3.0 * nu + 0.5
@@ -55,10 +55,16 @@ def run(re=100.0, steps=30000, nx=420, ny=160, D=20, U=0.04,
         probe = (cx + 2 * D, ny // 2)
     px, py = probe
 
-    # Inlet profile with a tiny perturbation, also used as the initial state
+    # Inlet profile with a tiny perturbation
     vel = np.zeros((2, nx, ny))
     vel[0] = U * (1.0 + 1e-4 * np.sin(2 * np.pi * y / (ny - 1)))
-    fin = equilibrium(np.ones((nx, ny)), vel)
+
+    # Initial state: inlet profile plus a transverse kick in the near wake,
+    # which breaks the symmetry and shortens the onset of shedding
+    u0 = vel.copy()
+    u0[1] = kick * U * np.exp(-((x - cx - D) ** 2 + (y - cy) ** 2) / D ** 2)
+    u0[:, solid] = 0.0
+    fin = equilibrium(np.ones((nx, ny)), u0)
 
     probe_v = np.empty(steps)
     mass0 = fin.sum()
@@ -117,10 +123,12 @@ def main():
     p.add_argument("--ny", type=int, default=160)
     p.add_argument("--D", type=int, default=20)
     p.add_argument("--U", type=float, default=0.04)
+    p.add_argument("--kick", type=float, default=0.3,
+                   help="initial transverse wake perturbation, as a fraction of U")
     p.add_argument("--out", default="results")
     a = p.parse_args()
 
-    r = run(a.re, a.steps, a.nx, a.ny, a.D, a.U)
+    r = run(a.re, a.steps, a.nx, a.ny, a.D, a.U, kick=a.kick)
     os.makedirs(a.out, exist_ok=True)
     tag = f"re{a.re:g}"
     np.savez_compressed(

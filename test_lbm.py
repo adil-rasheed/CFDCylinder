@@ -18,7 +18,7 @@ def test_equilibrium_moments():
 
 
 def test_uniform_flow_without_cylinder():
-    r = run(steps=500, nx=120, ny=40, cylinder=False, probe=(60, 20), log_every=0, verbose=False)
+    r = run(steps=500, nx=120, ny=40, cylinder=False, probe=(60, 20), kick=0.0, log_every=0, verbose=False)
     assert np.isfinite(r["u"]).all()
     assert np.abs(r["u"][0] - r["U"]).max() < 1e-4
     assert np.abs(r["u"][1]).max() < 1e-4
