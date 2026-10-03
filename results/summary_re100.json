@@ -1,0 +1,11 @@
+{
+  "Re": 100.0,
+  "St_zero_crossing": 0.184,
+  "St_fft": 0.1841,
+  "St_reference": 0.164,
+  "error_percent": 12.19,
+  "cycles_analyzed": 6,
+  "period_steps": 2717.4,
+  "period_std_steps": 7.4,
+  "passes": false
+}

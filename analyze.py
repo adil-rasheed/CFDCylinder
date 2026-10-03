@@ -1,6 +1,6 @@
 """Extract the Strouhal number from a cylinder_lbm.py run and make plots.
 
-Usage: python analyze.py results/run_re100.npz [--skip 15000]
+Usage: python analyze.py results/run_re100.npz [--skip 10000]
 """
 import argparse
 import json
@@ -55,7 +55,7 @@ def style(ax):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("run", nargs="?", default="results/run_re100.npz")
-    p.add_argument("--skip", type=int, default=15000, help="transient steps to discard")
+    p.add_argument("--skip", type=int, default=10000, help="transient steps to discard")
     a = p.parse_args()
 
     d = np.load(a.run)
@@ -122,8 +122,8 @@ def main():
     keep = st_axis <= 0.5
     ax2.plot(st_axis[keep], amp[keep] / amp.max(), color=SERIES, lw=1.5)
     ax2.axvline(ST_REF, color=MUTED, ls="--", lw=1.2)
-    ax2.text(ST_REF, 1.02, f" experiment {ST_REF}", color=MUTED, fontsize=9,
-             transform=ax2.get_xaxis_transform(), ha="right")
+    ax2.text(ST_REF - 0.008, 0.93, f"experiment\n{ST_REF}", color=MUTED, fontsize=9,
+             ha="right", va="top")
     ax2.annotate(f"LBM St = {st_zc:.3f}", (st_fft, 1.0), xytext=(14, -14),
                  textcoords="offset points", color=INK, fontsize=10)
     ax2.set_xlabel("Strouhal number  f D / U", color=INK)
