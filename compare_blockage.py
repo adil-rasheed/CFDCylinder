@@ -12,7 +12,7 @@ import numpy as np
 
 from analyze import INK, MUTED, SERIES, ST_REF, style, zero_crossing_frequency
 
-SKIP = 10000
+SKIP = 8000  # all runs reach saturated shedding by step 8000
 
 rows = []
 for path in sys.argv[1:]:
